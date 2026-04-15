@@ -1,0 +1,19 @@
+services:
+  client:
+    image: argocd-client
+    build:
+      context: ./client
+      args:
+        VITE_API_BASE_URL: http://localhost:${SERVER_PORT}
+    ports:
+      - ${UI_PORT}:${UI_PORT}
+    depends_on:
+      - server
+  server:
+    image: argocd-server
+    build: 
+      context: ./server
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      - PORT=${SERVER_PORT}
