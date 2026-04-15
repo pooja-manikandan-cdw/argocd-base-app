@@ -1,0 +1,17 @@
+export interface User {
+  id: number
+  name: string
+  email: string
+  password: string
+}
+
+export interface UserCreate {
+  name: string
+  email: string
+  password: string
+}
+
+export interface UserUpdate {
+  name: string
+  email: string
+}
