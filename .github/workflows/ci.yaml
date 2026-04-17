@@ -130,9 +130,6 @@ jobs:
             git checkout -b main
           fi
 
-      - name: Copy manifests into deploy repo
-        run: cp deployment.yaml service.yaml deploy-repo/
-
       - name: Update image tags in deployment manifests
         run: |
           sed -i "s|image: .*/user-manager-server:.*|image: ${{ secrets.DOCKER_USERNAME }}/user-manager-server:${{ steps.version.outputs.tag }}|" deploy-repo/deployment.yaml
