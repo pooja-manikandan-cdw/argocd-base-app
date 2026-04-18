@@ -68,7 +68,7 @@ jobs:
       - name: Build client image (validation)
         run: |
           docker build \
-            --build-arg VITE_API_BASE_URL=http://localhost:8000 \
+            --build-arg VITE_API_BASE_URL= \
             -t argocd-client:pr-${{ github.event.pull_request.number }} \
             ./client
 
@@ -101,7 +101,7 @@ jobs:
       - name: Build and push client image
         run: |
           docker build \
-            --build-arg VITE_API_BASE_URL=http://localhost:8000 \
+            --build-arg VITE_API_BASE_URL= \
             -t ${{ secrets.DOCKER_USERNAME }}/user-manager-client:${{ steps.version.outputs.tag }} \
             ./client
           docker push ${{ secrets.DOCKER_USERNAME }}/user-manager-client:${{ steps.version.outputs.tag }}
