@@ -28,7 +28,7 @@ export default function DeleteConfirmDialog({
         <DialogContentText>
           Are you sure you want to delete{' '}
           <strong>{user?.name}</strong> ({user?.email})? This action cannot be
-          undone
+          undone.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
