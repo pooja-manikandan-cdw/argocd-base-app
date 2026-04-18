@@ -17,7 +17,7 @@ export default function App() {
         <Toolbar>
           <PeopleAltIcon sx={{ mr: 1 }} />
           <Typography variant="h6" component="div">
-            User Manager app
+            User Manager app pooja
           </Typography>
         </Toolbar>
       </AppBar>
