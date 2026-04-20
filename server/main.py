@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException, Depends
+import time
+
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from app.database import get_db, engine
 from app.models import User, Base
 from app.schema import UserCreate, UserUpdate
-
+from app.logger import logger
 
 app = FastAPI()
 
@@ -16,12 +18,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    response = await call_next(request)
+    duration_ms = round((time.time() - start) * 1000, 2)
+    logger.info(
+        f"{request.method} {request.url.path} status={response.status_code} duration={duration_ms}ms"
+    )
+    return response
+
+
 Base.metadata.create_all(engine)
+logger.info("Application started, database tables created")
 
 
 @app.get("/users/")
 def get_all_users(db: Session = Depends(get_db)):
-    return db.query(User).all()
+    users = db.query(User).all()
+    logger.info(f"Fetched {len(users)} users")
+    return users
 
 @app.get("/users/{user_id}")
 def get_user_by_email(user_id: int, db: Session = Depends(get_db)):
@@ -37,6 +54,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    logger.info(f"Created user id={db_user.id} email={db_user.email}")
     return db_user
 
 @app.put("/users/{user_id}")
@@ -47,6 +65,7 @@ def update_user_by_email(user_id: int, user: UserUpdate, db: Session = Depends(g
     db_user.name = user.name
     db_user.email = user.email
     db.commit()
+    logger.info(f"Updated user id={user_id}")
     return {"message": "User updated successfully"}
 
 @app.delete("/users/{user_id}")
@@ -56,4 +75,5 @@ def delete_user_by_email(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     db.delete(db_user)
     db.commit()
+    logger.info(f"Deleted user id={user_id}")
     return {"message": "User deleted successfully"}
