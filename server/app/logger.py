@@ -2,7 +2,7 @@ import os
 import logging
 import logging_loki
 
-LOKI_URL = os.environ.get("LOKI_URL", "http://loki:3100/loki/api/v1/push")
+LOKI_URL = os.environ.get("LOKI_URL", "http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push")
 
 loki_handler = logging_loki.LokiHandler(
     url=LOKI_URL,
